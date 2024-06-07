@@ -1,5 +1,5 @@
 import {Formik} from 'formik';
-import React, {StrictMode, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -9,26 +9,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-
-type Currency = {
-  name: string;
-  symbol: string;
-  value: number;
-  flag: string;
-};
+import {currencies} from './constants';
+import {CurrencyCard} from './components/CurrencyCard';
 
 function App() {
   const [quantity, setQuantity] = useState('0');
   const [convertedValue, setConvertedValue] = useState('0');
-
-  const currencies: Currency[] = [
-    {name: 'USD', symbol: '$', value: 101.39278, flag: 'us'},
-    {name: 'EUR', symbol: '€', value: 110.27, flag: 'eu'},
-    {name: 'GBP', symbol: '£', value: 129.70345, flag: 'gb'},
-    {name: 'JPY', symbol: '¥', value: 0.64945187, flag: 'jp'},
-    {name: 'CNY', symbol: '¥', value: 13.989269, flag: 'cn'},
-    {name: 'KRW', symbol: '₩', value: 0.074044125, flag: 'kr'},
-  ];
 
   const [selectdCurrency, setSelectedCurrency] = useState<Currency>(
     currencies[0],
@@ -41,24 +27,6 @@ function App() {
       ).toString(),
     );
   }, [quantity, selectdCurrency]);
-
-  function CurrencyCard({currency}: {currency: Currency}) {
-    const flagUrl = `https://flagcdn.com/32x24/${currency.flag}.png`;
-    const backgroundColor =
-      currency.name === selectdCurrency.name ? '#5C5470' : '#FAF0E6';
-    const color =
-      currency.name === selectdCurrency.name ? '#FAF0E6' : '#5C5470';
-    return (
-      <TouchableOpacity
-        style={[style.card, {backgroundColor}]}
-        onPress={() => setSelectedCurrency(currency)}>
-        <Text style={[style.currencyName, {color}]}>{currency.name}</Text>
-        <Image source={{uri: flagUrl}} style={{width: 24, height: 24}} />
-        <Text
-          style={[style.currencyValue, {color}]}>{`${currency.value}CVE`}</Text>
-      </TouchableOpacity>
-    );
-  }
 
   return (
     <View style={{flex: 1, backgroundColor: '#352F44'}}>
@@ -79,7 +47,13 @@ function App() {
       </View>
       <FlatList
         data={currencies}
-        renderItem={({item}) => <CurrencyCard currency={item} />}
+        renderItem={({item}) => (
+          <CurrencyCard
+            currency={item}
+            selectedCurrency={selectdCurrency}
+            setSelectedCurrency={setSelectedCurrency}
+          />
+        )}
         keyExtractor={item => item.name}
         numColumns={3}
         columnWrapperStyle={{
@@ -92,18 +66,6 @@ function App() {
 }
 
 const style = StyleSheet.create({
-  card: {
-    flexDirection: 'column',
-    padding: 8,
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    backgroundColor: '#FAF0E6',
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: '#352F44',
-    width: '33%',
-    height: 80,
-  },
   convertedCard: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -115,13 +77,7 @@ const style = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 44,
   },
-  currencyName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  currencyValue: {
-    fontSize: 12,
-  },
+
   input: {
     height: 48,
     margin: 8,

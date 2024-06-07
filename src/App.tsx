@@ -1,14 +1,5 @@
-import {Formik} from 'formik';
 import React, {useEffect, useState} from 'react';
-import {
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {FlatList, StyleSheet, Text, TextInput, View} from 'react-native';
 import {currencies} from './constants';
 import {CurrencyCard} from './components/CurrencyCard';
 
@@ -22,9 +13,7 @@ function App() {
 
   useEffect(() => {
     setConvertedValue(
-      (
-        Math.round(Number(quantity) * selectdCurrency.value * 100) / 100
-      ).toString(),
+      (Number(quantity) * selectdCurrency.value * 100).toFixed(2).toString(),
     );
   }, [quantity, selectdCurrency]);
 
@@ -39,6 +28,7 @@ function App() {
           style={style.input}
           autoFocus
           numberOfLines={1}
+          clearButtonMode="always"
           placeholder="Ex. 100.00"
           value={quantity}
           onChangeText={setQuantity}
